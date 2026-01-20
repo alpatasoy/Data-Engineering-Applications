@@ -3,6 +3,7 @@ from sys import prefix
 import pandas as pd
 from sqlalchemy import create_engine
 from tqdm.auto import tqdm
+import click
 
 
 dtype = {
@@ -31,20 +32,28 @@ parse_dates = [
 
 
 
+@click.command()
+@click.option('--user', default='root', help='PostgreSQL user')
+@click.option('--password', default='root', help='PostgreSQL password')
+@click.option('--host', default='localhost', help='PostgreSQL host')
+@click.option('--port', default=5432, type=int, help='PostgreSQL port')
+@click.option('--db', default='ny_taxi', help='PostgreSQL database name')
+@click.option('--table', default='yellow_taxi_data', help='Target table name')
 
 
 
-def run():
+
+def run(user, password, host, port, db, table):
     year = 2021
     month = 1
-    pg_user = 'root'
-    pg_password = 'root'
-    pg_host = 'localhost'
-    pg_port = 5432
-    pg_db = 'ny_taxi'
+    pg_user = user
+    pg_password = password
+    pg_host = host
+    pg_port = port
+    pg_db = db
     chunksize = 10
-    table_name = 'yellow_taxi_data'
-    
+    table_name = table
+
     prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/'
     url = prefix + f'yellow_tripdata_{year}-{month:02d}.csv.gz'
 
@@ -68,6 +77,7 @@ def run():
             print("Table created")
         df_chunk.to_sql(name=table_name, con=engine, if_exists='append')
         print("ingested: ", len(df_chunk))
+    pass
 
 if __name__ == '__main__':
     run()
