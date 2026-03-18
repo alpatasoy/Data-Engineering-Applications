@@ -73,6 +73,12 @@ services:
               basePath: "/app/storage"
           queue:
             type: postgres
+          ai:
+            type: gemini
+            gemini:
+              model: gemini-2.0-flash
+              api-key: ${GEMINI_API_KEY}
+
           tasks:
             tmpDir:
               path: /tmp/kestra-wd/tmp
